@@ -1,4 +1,5 @@
 'use strict';
+const dotenv = require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const serverless = require('serverless-http');
@@ -7,6 +8,10 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const request = require('request-promise');
+
+const apiKey = process.env.SHOPIFY_API_KEY; // Netlify environment variable
+const apiSecret = process.env.SHOPIFY_API_SECRET; // Netlify environment variable
+const accessToken = process.env.SHOPIFY_API_ACCESS_TOKEN; // Netlify environment variable
 
 const validateSignature = (query) => {
   var parameters = [];
