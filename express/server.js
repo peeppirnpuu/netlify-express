@@ -21,6 +21,10 @@ const validateSignature = (query) => {
 };
 
 router.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
+router.get('/products', (req, res) => {
   if (req.query && Object.keys(req.query).length) {
     const validSignature = validateSignature(req.query);
 
