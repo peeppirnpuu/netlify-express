@@ -20,7 +20,7 @@ const validateSignature = (query) => {
   return digest === query.signature;
 };
 
-router.get('/products', (req, res) => {
+router.get('/', (req, res) => {
   if (req.query && Object.keys(req.query).length) {
     const validSignature = validateSignature(req.query);
 
