@@ -92,8 +92,8 @@ router.get('/lhv', (req, res) => {
       `</CofContractProduct>`+
       `<ValidToDtime>2019-10-05T14:35:00+03:00</ValidToDtime>`+
     `</CofContractProductList>`
-  const VK_RESPONSE = 'https://craftory.com/callback'
-  const VK_RETURN = 'https://craftory.com/return'
+  const VK_RESPONSE = 'https://api.craftory.com/lhv-response'
+  const VK_RETURN = 'https://craftory.com/'
   const VK_DATETIME = moment(datetime).format()
   let VK_MAC = '' // not required in RSA calculation
   const VK_ENCODING = 'UTF-8' // not required in RSA calculation
@@ -146,6 +146,11 @@ router.get('/lhv', (req, res) => {
     pathname: uri,
     query: body
   }))
+})
+
+router.get('/lhv-response', (req, res) => {
+  console.log(req.query)
+  return res.status(200).send(req.query)
 })
 
 app.use(bodyParser.json());
