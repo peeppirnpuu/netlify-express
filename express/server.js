@@ -7,11 +7,22 @@ const app = express();
 const router = express.Router();
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
+const NodeRSA = require('node-rsa');
+const sha1 = require('sha1');
+const uuidv4 = require('uuid/v4');
 const request = require('request-promise');
 
 const apiKey = process.env.SHOPIFY_API_KEY; // Netlify environment variable
 const apiSecret = process.env.SHOPIFY_API_SECRET; // Netlify environment variable
 const accessToken = process.env.SHOPIFY_API_ACCESS_TOKEN; // Netlify environment variable
+const privateKey = process.env.PRIVATE_KEY; // Netlify environment variable
+
+const lpad = (value, padding) => {
+  if (value.toString().length >= padding) return value
+
+  var zeroes = new Array(padding+1).join("0")
+  return (zeroes + value).slice(-padding)
+}
 
 const validateSignature = (query) => {
   var parameters = [];
@@ -56,6 +67,94 @@ router.get('/products', (req, res) => {
     return res.status(400).send('Not valid request.');
   }
 });
+
+router.get('/lhv', (req, res) => {
+  const key = new NodeRSA(privateKey)
+  const { n, d } = key.exportKey('components')
+
+  const datetime = new Date()
+
+  const VK_SERVICE = '5011'
+  const VK_VERSION = '008'
+  const VK_SND_ID = 'Craftory123'
+  const VK_REC_ID = 'LHV'
+  const VK_STAMP = uuidv4()
+  const VK_DATA =
+    `<CofContractProductList>`+
+      `<CofContractProduct>`+
+        `<Name>Great Sack</Name>`+
+        `<Code>1122</Code>`+
+        `<Currency>EUR</Currency>`+
+        `<CostInclVatAmount>55100</CostInclVatAmount>`+
+        `<CostVatPercent>20</CostVatPercent>`+
+      `</CofContractProduct>`+
+      `<ValidToDtime>2019-10-05T14:35:00+03:00</ValidToDtime>`+
+    `</CofContractProductList>`
+  const VK_RESPONSE = 'https://craftory.com/callback'
+  const VK_RETURN = 'https://craftory.com/return'
+  const VK_DATETIME = datetime.toISOString()
+  let VK_MAC = '' // not required in RSA calculation
+  const VK_ENCODING = 'UTF-8' // not required in RSA calculation
+  const VK_LANG = 'EST' // not required in RSA calculation
+  const VK_EMAIL = 'peep.pirnpuu+test@gmail.com'
+  const VK_PHONE = ''
+
+  const signatureBody = [
+    VK_SERVICE,
+    VK_VERSION,
+    VK_SND_ID,
+    VK_REC_ID,
+    VK_STAMP,
+    VK_DATA,
+    VK_RESPONSE,
+    VK_RETURN,
+    VK_DATETIME,
+    VK_EMAIL,
+    VK_PHONE
+  ]
+
+  signatureBody.map(value => {
+    VK_MAC = VK_MAC + lpad(value.length, 3) + value
+  })
+
+  VK_MAC = sha1(VK_MAC)
+  VK_MAC = key.sign(`${VK_MAC}, ${d}, ${n}`, 'base64', 'utf8')
+
+  const uri = 'https://www.lhv.ee/coflink'
+  const testUri = 'https://www.lhv.ee/coflink?testRequest=true'
+
+  const options = {
+    method: 'POST',
+    uri: testUri,
+    body: {
+      VK_SERVICE,
+      VK_VERSION,
+      VK_SND_ID,
+      VK_REC_ID,
+      VK_STAMP,
+      VK_DATA,
+      VK_RESPONSE,
+      VK_RETURN,
+      VK_DATETIME,
+      VK_MAC,
+      VK_ENCODING,
+      VK_LANG,
+      VK_EMAIL,
+      VK_PHONE
+    },
+    json: true // Automatically stringifies the body to JSON
+  }
+
+  request(options)
+  .then((parsedBody) => {
+    console.log({parsedBody})
+    res.status(200).end(parsedBody)
+  })
+  .catch((error) => {
+    console.log({error})
+    res.status(error.statusCode).send(error.message)
+  })
+})
 
 app.use(bodyParser.json());
 app.use('/.netlify/functions/server', router);  // path must route to lambda
