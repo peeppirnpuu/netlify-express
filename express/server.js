@@ -71,6 +71,8 @@ router.get('/products', (req, res) => {
 });
 
 router.get('/lhv', (req, res) => {
+  const { testRequest } = req.query
+
   const key = new NodeRSA(privateKey)
   const { n, d } = key.exportKey('components')
 
@@ -144,7 +146,7 @@ router.get('/lhv', (req, res) => {
 
   res.redirect(url.format({
     pathname: uri,
-    query: body
+    query: testRequest ? {testRequest: true, ...body} : body
   }))
 })
 
