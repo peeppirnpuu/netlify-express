@@ -6,6 +6,7 @@ const serverless = require('serverless-http');
 const app = express();
 const router = express.Router();
 const bodyParser = require('body-parser');
+const moment = require('moment');
 const crypto = require('crypto');
 const NodeRSA = require('node-rsa');
 const sha1 = require('sha1');
@@ -92,7 +93,7 @@ router.get('/lhv', (req, res) => {
     `</CofContractProductList>`
   const VK_RESPONSE = 'https://craftory.com/callback'
   const VK_RETURN = 'https://craftory.com/return'
-  const VK_DATETIME = datetime.toISOString()
+  const VK_DATETIME = moment(datetime).format()
   let VK_MAC = '' // not required in RSA calculation
   const VK_ENCODING = 'UTF-8' // not required in RSA calculation
   const VK_LANG = 'EST' // not required in RSA calculation
@@ -122,26 +123,29 @@ router.get('/lhv', (req, res) => {
 
   const uri = 'https://www.lhv.ee/coflink'
   const testUri = 'https://www.lhv.ee/coflink?testRequest=true'
+  const body = {
+    VK_SERVICE,
+    VK_VERSION,
+    VK_SND_ID,
+    VK_REC_ID,
+    VK_STAMP,
+    VK_DATA,
+    VK_RESPONSE,
+    VK_RETURN,
+    VK_DATETIME,
+    VK_MAC,
+    VK_ENCODING,
+    VK_LANG,
+    VK_EMAIL,
+    VK_PHONE
+  }
+
+  console.log({body})
 
   const options = {
     method: 'POST',
-    uri: testUri,
-    body: {
-      VK_SERVICE,
-      VK_VERSION,
-      VK_SND_ID,
-      VK_REC_ID,
-      VK_STAMP,
-      VK_DATA,
-      VK_RESPONSE,
-      VK_RETURN,
-      VK_DATETIME,
-      VK_MAC,
-      VK_ENCODING,
-      VK_LANG,
-      VK_EMAIL,
-      VK_PHONE
-    },
+    uri: uri,
+    body,
     json: true // Automatically stringifies the body to JSON
   }
 
