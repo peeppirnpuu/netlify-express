@@ -71,7 +71,7 @@ router.get('/products', (req, res) => {
 });
 
 router.get('/lhv', (req, res) => {
-  const { testRequest } = req.query
+  const { testRequest, post } = req.query
 
   const key = new NodeRSA(privateKey)
   const { n, d } = key.exportKey('components')
@@ -125,7 +125,7 @@ router.get('/lhv', (req, res) => {
   VK_MAC = key.sign(`${VK_MAC}, ${d}, ${n}`, 'base64', 'utf8')
 
   const uri = 'https://www.lhv.ee/coflink'
-  const body = {
+  let body = {
     VK_SERVICE,
     VK_VERSION,
     VK_SND_ID,
@@ -141,13 +141,33 @@ router.get('/lhv', (req, res) => {
     VK_EMAIL,
     VK_PHONE
   }
+  body = testRequest ? {testRequest: true, ...body} : body
 
   console.log({body})
 
-  res.redirect(url.format({
-    pathname: uri,
-    query: testRequest ? {testRequest: true, ...body} : body
-  }))
+  if (post) {
+    const options = {
+      method: 'POST',
+      uri: uri,
+      body,
+      json: true // Automatically stringifies the body to JSON
+    }
+
+    request(options)
+    .then((parsedBody) => {
+      console.log({parsedBody})
+      res.status(200).end(parsedBody)
+    })
+    .catch((error) => {
+      console.log({error})
+      res.status(error.statusCode).send(error.message)
+    })
+  } else {
+    res.redirect(url.format({
+      pathname: uri,
+      query: body
+    }))
+  }
 })
 
 router.get('/lhv-response', (req, res) => {
