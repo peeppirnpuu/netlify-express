@@ -7,6 +7,7 @@ const app = express();
 const router = express.Router();
 const bodyParser = require('body-parser');
 const moment = require('moment');
+const url = require('url');
 const crypto = require('crypto');
 const NodeRSA = require('node-rsa');
 const sha1 = require('sha1');
@@ -122,7 +123,6 @@ router.get('/lhv', (req, res) => {
   VK_MAC = key.sign(`${VK_MAC}, ${d}, ${n}`, 'base64', 'utf8')
 
   const uri = 'https://www.lhv.ee/coflink'
-  const testUri = 'https://www.lhv.ee/coflink?testRequest=true'
   const body = {
     VK_SERVICE,
     VK_VERSION,
@@ -142,22 +142,10 @@ router.get('/lhv', (req, res) => {
 
   console.log({body})
 
-  const options = {
-    method: 'POST',
-    uri: uri,
-    body,
-    json: true // Automatically stringifies the body to JSON
-  }
-
-  request(options)
-  .then((parsedBody) => {
-    console.log({parsedBody})
-    res.status(200).end(parsedBody)
-  })
-  .catch((error) => {
-    console.log({error})
-    res.status(error.statusCode).send(error.message)
-  })
+  res.redirect(url.format({
+    pathname: uri,
+    query: body
+  }))
 })
 
 app.use(bodyParser.json());
