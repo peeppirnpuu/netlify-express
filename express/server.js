@@ -124,7 +124,11 @@ router.get('/lhv', (req, res) => {
   console.log('signature body mapping', VK_MAC)
 
   VK_MAC = sha1(VK_MAC)
-  VK_MAC = key.sign(`${VK_MAC}, ${d}, ${n}`, 'base64')
+
+  console.log('components: VK_MAC', VK_MAC)
+  console.log('components: d', d)
+  console.log('components: n', n)
+  VK_MAC = key.sign(VK_MAC, 'base64')
 
   const uri = 'https://www.lhv.ee/coflink'
   let body = {
