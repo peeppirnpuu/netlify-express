@@ -113,13 +113,11 @@ router.get('/lhv', (req, res) => {
     form: testRequest ? {testRequest: true, ...body} : body
   }
 
-  // console.log({body})
-  // console.log('body encodeURIComponent()', encodeURIComponent(body))
-  // console.log({options})
+  console.log({options})
 
   request(options)
   .then((parsedBody) => {
-    console.log('success', parsedBody)
+    console.log('success')
     res.status(200).end(parsedBody)
   })
   .catch((error) => {
