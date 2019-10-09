@@ -82,7 +82,7 @@ router.get('/lhv', (req, res) => {
   const VK_VERSION = '008'
   const VK_SND_ID = 'Craftory123'
   const VK_REC_ID = 'LHV'
-  const VK_STAMP = uuidv4()
+  const VK_STAMP = '1' // uuidv4()
   const VK_DATA =
     `<CofContractProductList>`+
       `<CofContractProduct>`+
