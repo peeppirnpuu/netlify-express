@@ -73,8 +73,8 @@ router.get('/products', (req, res) => {
 router.get('/lhv', (req, res) => {
   const { testRequest } = req.query
 
-  const key = new NodeRSA(privateKey)
-  const { n, d } = key.exportKey('components')
+  const key = new NodeRSA(privateKey, 'pkcs8') // Import non-RSA private key
+  const RSAPrivateKey = key.exportKey('pkcs1') // Export RSA private key
 
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
@@ -115,12 +115,18 @@ router.get('/lhv', (req, res) => {
     VK_PHONE
   ]
 
+  let macString = ''
+
   signatureBody.map(value => {
-    VK_MAC = VK_MAC + lpad(value.length, 3) + value
+    macString = macString + lpad(value.length, 3) + value
   })
 
-  VK_MAC = sha1(VK_MAC)
-  VK_MAC = key.encrypt(VK_MAC, 'base64', 'hex')
+  // iPizza
+  const signer = crypto.createSign('RSA-SHA1')
+  signer.update(macString)
+  const signature = signer.sign(RSAPrivateKey, 'base64')
+
+  VK_MAC = signature
 
   const uri = 'https://www.lhv.ee/coflink'
   let body = {
