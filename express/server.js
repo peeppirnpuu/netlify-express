@@ -92,7 +92,7 @@ router.get('/lhv', (req, res) => {
         `<CostInclVatAmount>55100</CostInclVatAmount>`+
         `<CostVatPercent>20</CostVatPercent>`+
       `</CofContractProduct>`+
-      `<ValidToDtime>2019-10-05T14:35:00+03:00</ValidToDtime>`+
+      `<ValidToDtime>2019-10-20T14:35:00+03:00</ValidToDtime>`+
     `</CofContractProductList>`
   const VK_RESPONSE = 'https://api.craftory.com/lhv-response'
   const VK_RETURN = 'https://craftory.com/'
@@ -120,6 +120,8 @@ router.get('/lhv', (req, res) => {
   signatureBody.map(value => {
     VK_MAC = VK_MAC + lpad(value.length, 3) + value
   })
+
+  console.log('signature body mapping', VK_MAC)
 
   VK_MAC = sha1(VK_MAC)
   VK_MAC = key.sign(`${VK_MAC}, ${d}, ${n}`, 'base64')
