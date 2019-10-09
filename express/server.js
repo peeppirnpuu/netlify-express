@@ -128,7 +128,7 @@ router.get('/lhv', (req, res) => {
   console.log('components: VK_MAC', VK_MAC)
   console.log('components: d', d)
   console.log('components: n', n)
-  VK_MAC = key.sign(VK_MAC, 'base64')
+  VK_MAC = key.encrypt(VK_MAC, 'base64')
 
   const uri = 'https://www.lhv.ee/coflink'
   let body = {
