@@ -46,7 +46,7 @@ const signMac = (macString) => {
 }
 
 router.get('/lhv', (req, res) => {
-  const { testRequest } = req.query
+  const { testRequest, form } = req.query
 
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
@@ -107,23 +107,40 @@ router.get('/lhv', (req, res) => {
     VK_PHONE
   }
 
-  const options = {
-    method: 'POST',
-    uri,
-    form: testRequest ? {testRequest: true, ...body} : body
+  if (form) {
+    const options = {
+      method: 'POST',
+      uri,
+      form: testRequest ? {testRequest: true, ...body} : body
+    }
+
+    request(options)
+    .then((body) => {
+      console.log('success')
+      res.status(200).end(body)
+    })
+    .catch((error) => {
+      console.log('error', error)
+      res.status(error.statusCode).send(error.message)
+    })
+  } else {
+    const options = {
+      method: 'POST',
+      uri,
+      body: testRequest ? {testRequest: true, ...body} : body,
+      json: true // Automatically stringifies the body to JSON
+    }
+
+    request(options)
+    .then((parsedBody) => {
+      console.log('success')
+      res.status(200).end(parsedBody)
+    })
+    .catch((error) => {
+      console.log('error', error)
+      res.status(error.statusCode).send(error.message)
+    })
   }
-
-  console.log({options})
-
-  request(options)
-  .then((parsedBody) => {
-    console.log('success')
-    res.status(200).end(parsedBody)
-  })
-  .catch((error) => {
-    console.log('error', error)
-    res.status(error.statusCode).send(error.message)
-  })
 })
 
 router.get('/lhv-response', (req, res) => {
