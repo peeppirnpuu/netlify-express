@@ -6,7 +6,7 @@ const serverless = require('serverless-http');
 const app = express();
 const router = express.Router();
 const bodyParser = require('body-parser');
-const moment = require('moment');
+const moment = require('moment-timezone')
 const url = require('url');
 const crypto = require('crypto');
 const NodeRSA = require('node-rsa');
@@ -76,8 +76,6 @@ router.get('/lhv', (req, res) => {
   const key = new NodeRSA(privateKey)
   const { n, d } = key.exportKey('components')
 
-  const datetime = new Date()
-
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
   const VK_SND_ID = 'Craftory123'
@@ -96,7 +94,7 @@ router.get('/lhv', (req, res) => {
     `</CofContractProductList>`
   const VK_RESPONSE = 'https://api.craftory.com/lhv-response'
   const VK_RETURN = 'https://craftory.com/'
-  const VK_DATETIME = moment(datetime).format()
+  const VK_DATETIME = moment().tz('Estonia/Tallinn').format()
   let VK_MAC = '' // not required in RSA calculation
   const VK_ENCODING = 'UTF-8' // not required in RSA calculation
   const VK_LANG = 'EST' // not required in RSA calculation

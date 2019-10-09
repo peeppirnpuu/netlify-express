@@ -23,6 +23,7 @@
   "homepage": "https://github.com/neverendingqs/netlify-express#readme",
   "dependencies": {
     "moment": "^2.24.0",
+    "moment-timezone": "^0.5.26",
     "node-rsa": "^1.0.6",
     "sha1": "^1.1.1",
     "url": "^0.11.0",
