@@ -106,23 +106,24 @@ router.get('/lhv', (req, res) => {
     VK_EMAIL,
     VK_PHONE
   }
-  body = testRequest ? {testRequest: true, ...body} : body
-
-  console.log({body})
 
   const options = {
     method: 'POST',
-    uri: uri,
-    body,
-    json: true // Automatically stringifies the body to JSON
+    uri,
+    form: testRequest ? {testRequest: true, ...body} : body
   }
+
+  // console.log({body})
+  // console.log('body encodeURIComponent()', encodeURIComponent(body))
+  // console.log({options})
 
   request(options)
   .then((parsedBody) => {
+    console.log('success', parsedBody)
     res.status(200).end(parsedBody)
   })
   .catch((error) => {
-    console.log({error})
+    console.log('error', error)
     res.status(error.statusCode).send(error.message)
   })
 })
