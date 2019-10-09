@@ -17,7 +17,7 @@ const request = require('request-promise');
 const apiKey = process.env.SHOPIFY_API_KEY; // Netlify environment variable
 const apiSecret = process.env.SHOPIFY_API_SECRET; // Netlify environment variable
 const accessToken = process.env.SHOPIFY_API_ACCESS_TOKEN; // Netlify environment variable
-const privateKey = process.env.PRIVATE_KEY; // Netlify environment variable
+const privateKey = process.env.SERVER_PRIVATE_KEY; // Netlify environment variable
 
 const lpad = (value, padding) => {
   if (value.toString().length >= padding) return value
