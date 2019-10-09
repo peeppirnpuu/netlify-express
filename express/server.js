@@ -37,7 +37,7 @@ const signMac = (macString) => {
   const key = new NodeRSA(privateKey, 'pkcs8') // Import non-RSA private key
   const RSAPrivateKey = key.exportKey('pkcs1') // Export RSA private key
 
-  // iPizza signing method
+  // iPizza signing function
   const signer = crypto.createSign('RSA-SHA1')
   signer.update(macString)
   const signature = signer.sign(RSAPrivateKey, 'base64')
@@ -66,7 +66,7 @@ router.get('/lhv', (req, res) => {
     `</CofContractProductList>`
   const VK_RESPONSE = 'https://api.craftory.com/lhv-response'
   const VK_RETURN = 'https://craftory.com/'
-  const VK_DATETIME = moment().tz('Estonia/Tallinn').format()
+  const VK_DATETIME = moment().tz('Europe/Tallinn').format()
   let VK_MAC = '' // not required in RSA calculation
   const VK_ENCODING = 'UTF-8' // not required in RSA calculation
   const VK_LANG = 'EST' // not required in RSA calculation
@@ -87,6 +87,8 @@ router.get('/lhv', (req, res) => {
     VK_PHONE
   ])
 
+  console.log({mac})
+
   VK_MAC = signMac(mac)
 
   const uri = 'https://www.lhv.ee/coflink'
@@ -106,6 +108,8 @@ router.get('/lhv', (req, res) => {
     VK_EMAIL,
     VK_PHONE
   }
+
+  console.log({body})
 
   if (form) {
     const options = {
