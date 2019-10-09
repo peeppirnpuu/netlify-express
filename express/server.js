@@ -71,7 +71,7 @@ router.get('/products', (req, res) => {
 });
 
 router.get('/lhv', (req, res) => {
-  const { testRequest, post } = req.query
+  const { testRequest } = req.query
 
   const key = new NodeRSA(privateKey)
   const { n, d } = key.exportKey('components')
@@ -121,14 +121,8 @@ router.get('/lhv', (req, res) => {
     VK_MAC = VK_MAC + lpad(value.length, 3) + value
   })
 
-  console.log('signature body mapping', VK_MAC)
-
   VK_MAC = sha1(VK_MAC)
-
-  console.log('components: VK_MAC', VK_MAC)
-  console.log('components: d', d)
-  console.log('components: n', n)
-  VK_MAC = key.encrypt(VK_MAC, 'base64')
+  const VK_MAC = key.encrypt(VK_MAC, 'base64', 'hex')
 
   const uri = 'https://www.lhv.ee/coflink'
   let body = {
@@ -151,29 +145,21 @@ router.get('/lhv', (req, res) => {
 
   console.log({body})
 
-  if (post) {
-    const options = {
-      method: 'POST',
-      uri: uri,
-      body,
-      json: true // Automatically stringifies the body to JSON
-    }
-
-    request(options)
-    .then((parsedBody) => {
-      console.log({parsedBody})
-      res.status(200).end(parsedBody)
-    })
-    .catch((error) => {
-      console.log({error})
-      res.status(error.statusCode).send(error.message)
-    })
-  } else {
-    res.redirect(url.format({
-      pathname: uri,
-      query: body
-    }))
+  const options = {
+    method: 'POST',
+    uri: uri,
+    body,
+    json: true // Automatically stringifies the body to JSON
   }
+
+  request(options)
+  .then((parsedBody) => {
+    res.status(200).end(parsedBody)
+  })
+  .catch((error) => {
+    console.log({error})
+    res.status(error.statusCode).send(error.message)
+  })
 })
 
 router.get('/lhv-response', (req, res) => {
