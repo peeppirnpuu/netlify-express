@@ -25,10 +25,7 @@
     "crypto": "^1.0.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
-    "node-rsa": "^1.0.6",
-    "sha1": "^1.1.1",
-    "url": "^0.11.0",
-    "uuid": "^3.3.3"
+    "node-rsa": "^1.0.6"
   },
   "devDependencies": {
     "body-parser": "^1.19.0",

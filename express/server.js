@@ -7,11 +7,8 @@ const app = express();
 const router = express.Router();
 const bodyParser = require('body-parser');
 const moment = require('moment-timezone')
-const url = require('url');
 const crypto = require('crypto');
 const NodeRSA = require('node-rsa');
-const sha1 = require('sha1');
-const uuidv4 = require('uuid/v4');
 const request = require('request-promise');
 
 const apiKey = process.env.SHOPIFY_API_KEY; // Netlify environment variable
@@ -26,61 +23,34 @@ const lpad = (value, padding) => {
   return (zeroes + value).slice(-padding)
 }
 
-const validateSignature = (query) => {
-  var parameters = [];
-  for (var key in query) {
-    if (key != 'signature') {
-      parameters.push(key + '=' + query[key])
-    }
-  }
-  var message = parameters.sort().join('');
-  var digest = crypto.createHmac('sha256', apiSecret).update(message).digest('hex');
-  return digest === query.signature;
-};
+const getMac = (body) => {
+  let mac = ''
 
-router.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+  body.map(value => {
+    mac = mac + lpad(value.length, 3) + value
+  })
 
-router.get('/products', (req, res) => {
-  if (req.query && Object.keys(req.query).length) {
-    const validSignature = validateSignature(req.query);
+  return mac
+}
 
-    if (validSignature) {
-      const { shop } = req.query;
+const signMac = (macString) => {
+  const key = new NodeRSA(privateKey, 'pkcs8') // Import non-RSA private key
+  const RSAPrivateKey = key.exportKey('pkcs1') // Export RSA private key
 
-      const shopRequestUrl = 'https://' + shop + '/admin/api/2019-07/products.json';
-      const shopRequestHeaders = {
-        'X-Shopify-Access-Token': accessToken,
-      };
-
-      request.get(shopRequestUrl, { headers: shopRequestHeaders })
-      .then((shopResponse) => {
-        console.log('shopResponse', shopResponse);
-        res.status(200).end(shopResponse);
-      })
-      .catch((error) => {
-        res.status(error.statusCode).send(error.error.error_description);
-      });
-    } else {
-      return res.status(400).send('Can not validate signature.');
-    }
-  } else {
-    return res.status(400).send('Not valid request.');
-  }
-});
+  // iPizza signing method
+  const signer = crypto.createSign('RSA-SHA1')
+  signer.update(macString)
+  const signature = signer.sign(RSAPrivateKey, 'base64')
+}
 
 router.get('/lhv', (req, res) => {
   const { testRequest } = req.query
-
-  const key = new NodeRSA(privateKey, 'pkcs8') // Import non-RSA private key
-  const RSAPrivateKey = key.exportKey('pkcs1') // Export RSA private key
 
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
   const VK_SND_ID = 'Craftory123'
   const VK_REC_ID = 'LHV'
-  const VK_STAMP = '1' // uuidv4()
+  const VK_STAMP = '1234567890'
   const VK_DATA =
     `<CofContractProductList>`+
       `<CofContractProduct>`+
@@ -101,7 +71,7 @@ router.get('/lhv', (req, res) => {
   const VK_EMAIL = 'peep.pirnpuu+test@gmail.com'
   const VK_PHONE = ''
 
-  const signatureBody = [
+  const mac = getMac([
     VK_SERVICE,
     VK_VERSION,
     VK_SND_ID,
@@ -113,20 +83,9 @@ router.get('/lhv', (req, res) => {
     VK_DATETIME,
     VK_EMAIL,
     VK_PHONE
-  ]
+  ])
 
-  let macString = ''
-
-  signatureBody.map(value => {
-    macString = macString + lpad(value.length, 3) + value
-  })
-
-  // iPizza
-  const signer = crypto.createSign('RSA-SHA1')
-  signer.update(macString)
-  const signature = signer.sign(RSAPrivateKey, 'base64')
-
-  VK_MAC = signature
+  VK_MAC = signMac(mac)
 
   const uri = 'https://www.lhv.ee/coflink'
   let body = {
