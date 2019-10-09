@@ -41,6 +41,8 @@ const signMac = (macString) => {
   const signer = crypto.createSign('RSA-SHA1')
   signer.update(macString)
   const signature = signer.sign(RSAPrivateKey, 'base64')
+
+  return signature
 }
 
 router.get('/lhv', (req, res) => {
