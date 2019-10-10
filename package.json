@@ -22,10 +22,10 @@
   },
   "homepage": "https://github.com/neverendingqs/netlify-express#readme",
   "dependencies": {
-    "crypto": "^1.0.1",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.26",
-    "node-rsa": "^1.0.6"
+    "node-rsa": "^1.0.6",
+    "sha1": "^1.1.1"
   },
   "devDependencies": {
     "body-parser": "^1.19.0",

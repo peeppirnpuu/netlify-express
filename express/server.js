@@ -9,12 +9,14 @@ const bodyParser = require('body-parser');
 const moment = require('moment-timezone')
 const crypto = require('crypto');
 const NodeRSA = require('node-rsa');
+const sha1 = require('sha1');
 const request = require('request-promise');
 
 const apiKey = process.env.SHOPIFY_API_KEY; // Netlify environment variable
 const apiSecret = process.env.SHOPIFY_API_SECRET; // Netlify environment variable
 const accessToken = process.env.SHOPIFY_API_ACCESS_TOKEN; // Netlify environment variable
 const privateKey = process.env.SERVER_PRIVATE_KEY; // Netlify environment variable
+const RSAPrivateKey = process.env.SERVER_RSA_PRIVATE_KEY; // Netlify environment variable
 
 const lpad = (value, padding) => {
   if (value.toString().length >= padding) return value
@@ -34,13 +36,15 @@ const getMac = (body) => {
 }
 
 const signMac = (macString) => {
-  const key = new NodeRSA(privateKey, 'pkcs8') // Import non-RSA private key
-  const RSAPrivateKey = key.exportKey('pkcs1') // Export RSA private key
+  const key = new NodeRSA(RSAPrivateKey)
 
-  // iPizza signing function
-  const signer = crypto.createSign('RSA-SHA1')
-  signer.update(macString)
-  const signature = signer.sign(RSAPrivateKey, 'base64')
+  // // iPizza signing function
+  // const signer = crypto.createSign('RSA-SHA1')
+  // signer.update(macString)
+  // const signature = signer.sign(RSAPrivateKey, 'base64')
+
+  const hash = sha1(signMac)
+  const signature = key.sign(hash, 'base64', 'hex')
 
   return signature
 }
