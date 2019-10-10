@@ -38,15 +38,15 @@ const getMac = (body) => {
 const signMac = (macString) => {
   const key = new NodeRSA(RSAPrivateKey)
 
+  const hash = sha1(signMac)
+  const signature = key.sign(hash, 'base64', 'hex')
+
   // // iPizza signing function
   // const signer = crypto.createSign('RSA-SHA1')
   // signer.update(macString)
   // const signature = signer.sign(RSAPrivateKey, 'base64')
 
-  const hash = sha1(signMac)
-  // const signature = key.sign(hash, 'base64', 'hex')
-
-  return key.encrypt(hash, 'base64')
+  return signature
 }
 
 router.get('/lhv', (req, res) => {
