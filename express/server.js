@@ -46,11 +46,11 @@ const signMac = (macString) => {
 }
 
 router.get('/lhv', (req, res) => {
-  const { testRequest, form } = req.query
+  const { testRequest, form, clientId } = req.query
 
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
-  const VK_SND_ID = 'Craftory123'
+  const VK_SND_ID = clientId
   const VK_REC_ID = 'LHV'
   const VK_STAMP = '1234567890'
   const VK_DATA =
