@@ -11,6 +11,8 @@ const crypto = require('crypto');
 const NodeRSA = require('node-rsa');
 const sha1 = require('sha1');
 const request = require('request-promise');
+const axios = require('axios');
+const querystring = require('querystring')
 
 const apiKey = process.env.SHOPIFY_API_KEY; // Netlify environment variable
 const apiSecret = process.env.SHOPIFY_API_SECRET; // Netlify environment variable
