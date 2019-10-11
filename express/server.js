@@ -162,6 +162,8 @@ router.get('/form', (req, res) => {
 router.get('/coflink', (req, res) => {
   const params = getParams(req.query)
 
+  console.log('get /coflink', {params})
+
   res.status(200).end(JSON.stringify(params))
 })
 
