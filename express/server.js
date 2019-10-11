@@ -54,14 +54,14 @@ const getParams = (query) => {
   const VK_VERSION = '008'
   const VK_SND_ID = 'Craftory123'
   const VK_REC_ID = 'LHV'
-  const VK_STAMP = order
+  const VK_STAMP = order || ''
   const VK_DATA =
     `<CofContractProductList>`+
       `<CofContractProduct>`+
-        `<Name>Tellimus nr ${order}</Name>`+
+        `<Name>Tellimus nr ${order || ''}</Name>`+
         `<Code></Code>`+
         `<Currency>EUR</Currency>`+
-        `<CostInclVatAmount>${total}</CostInclVatAmount>`+
+        `<CostInclVatAmount>${total || 0}</CostInclVatAmount>`+
         `<CostVatPercent>20</CostVatPercent>`+
       `</CofContractProduct>`+
       `<ValidToDtime>${moment(Date.now() + 7 * 24 * 3600 * 1000).tz('Europe/Tallinn').format()}</ValidToDtime>`+
@@ -72,8 +72,8 @@ const getParams = (query) => {
   let VK_MAC = '' // not required in RSA calculation
   const VK_ENCODING = 'UTF-8' // not required in RSA calculation
   const VK_LANG = 'EST' // not required in RSA calculation
-  const VK_EMAIL = email
-  const VK_PHONE = phone
+  const VK_EMAIL = email || ''
+  const VK_PHONE = phone || ''
 
   const mac = getMac([
     VK_SERVICE,
