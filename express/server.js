@@ -15,8 +15,8 @@ const request = require('request-promise');
 const apiKey = process.env.SHOPIFY_API_KEY; // Netlify environment variable
 const apiSecret = process.env.SHOPIFY_API_SECRET; // Netlify environment variable
 const accessToken = process.env.SHOPIFY_API_ACCESS_TOKEN; // Netlify environment variable
-const privateKey = process.env.SERVER_PRIVATE_KEY; // Netlify environment variable
-const RSAPrivateKey = process.env.SERVER_RSA_PRIVATE_KEY; // Netlify environment variable
+const privateKey = new NodeRSA(process.env.PRIVATE_KEY).exportKey(); // Netlify environment variable
+const RSAPrivateKey = new NodeRSA(process.env.RSA_PRIVATE_KEY).exportKey(); // Netlify environment variable
 
 const lpad = (value, padding) => {
   if (value.toString().length >= padding) return value
@@ -36,25 +36,20 @@ const getMac = (body) => {
 }
 
 const signMac = (macString) => {
-  const key = new NodeRSA(RSAPrivateKey)
-
-  const hash = sha1(signMac)
-  const signature = key.sign(hash, 'base64', 'hex')
-
-  // // iPizza signing function
-  // const signer = crypto.createSign('RSA-SHA1')
-  // signer.update(macString)
-  // const signature = signer.sign(RSAPrivateKey, 'base64')
+  // iPizza signing function
+  const signer = crypto.createSign('RSA-SHA1')
+  signer.update(macString)
+  const signature = signer.sign(RSAPrivateKey, 'base64')
 
   return signature
 }
 
 router.get('/lhv', (req, res) => {
-  const { testRequest, form, clientId } = req.query
+  const { testRequest } = req.query
 
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
-  const VK_SND_ID = clientId
+  const VK_SND_ID = 'Craftory123'
   const VK_REC_ID = 'LHV'
   const VK_STAMP = '1234567890'
   const VK_DATA =
@@ -91,11 +86,8 @@ router.get('/lhv', (req, res) => {
     VK_PHONE
   ])
 
-  console.log({mac})
-
   VK_MAC = signMac(mac)
 
-  const uri = 'https://www.lhv.ee/coflink'
   let body = {
     VK_SERVICE,
     VK_VERSION,
@@ -113,45 +105,36 @@ router.get('/lhv', (req, res) => {
     VK_PHONE
   }
 
-  console.log({body})
+  axios({
+    method: 'POST',
+    url: 'https://www.lhv.ee/coflink',
+    data: querystring.stringify({testRequest: true, ...body})
+  })
+    .then(function (response) {
+      res.redirect(response.request.res.responseUrl) // how secure is using response.request.res.responseUrl
 
-  if (form) {
-    const options = {
-      method: 'POST',
-      uri,
-      form: testRequest ? {testRequest: true, ...body} : body
-    }
+      // res.status(200).end(response.data)
+    })
 
-    request(options)
-    .then((body) => {
-      console.log('success')
-      res.status(200).end(body)
-    })
-    .catch((error) => {
-      console.log('error', error)
-      res.status(error.statusCode).send(error.message)
-    })
-  } else {
-    const options = {
-      method: 'POST',
-      uri,
-      body: testRequest ? {testRequest: true, ...body} : body,
-      json: true // Automatically stringifies the body to JSON
-    }
-
-    request(options)
-    .then((parsedBody) => {
-      console.log('success')
-      res.status(200).end(parsedBody)
-    })
-    .catch((error) => {
-      console.log('error', error)
-      res.status(error.statusCode).send(error.message)
-    })
-  }
+  // request({
+  //   method: 'POST',
+  //   uri: 'https://www.lhv.ee/coflink',
+  //   form: {testRequest: true, ...body},
+  //   followAllRedirects: true
+  // })
+  //   .then((body) => {
+  //     console.log('success', body)
+  //     res.status(200).end(body)
+  //   })
+  //   .catch((err) => {
+  //     console.log('error', err)
+  //     res.status(err.statusCode).send(err.message)
+  //   })
 })
 
-router.get('/lhv-response', (req, res) => {
+router.post('/lhv-response', (req, res) => {
+  console.log('post response', {req, res})
+
   console.log(req.query)
   return res.status(200).send(req.query)
 })
