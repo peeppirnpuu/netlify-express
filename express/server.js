@@ -46,7 +46,7 @@ const signMac = (macString) => {
   return signature
 }
 
-router.get('/lhv', (req, res) => {
+router.get('/coflink', (req, res) => {
   const { testRequest } = req.query
 
   const VK_SERVICE = '5011'
@@ -110,7 +110,7 @@ router.get('/lhv', (req, res) => {
   axios({
     method: 'POST',
     url: 'https://www.lhv.ee/coflink',
-    data: querystring.stringify({testRequest: true, ...body})
+    data: querystring.stringify(testRequest ? {testRequest: true, ...body} : body)
   })
     .then(function (response) {
       res.redirect(response.request.res.responseUrl) // how secure is using response.request.res.responseUrl
