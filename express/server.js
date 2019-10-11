@@ -50,6 +50,8 @@ const signMac = (macString) => {
 const getParams = (query) => {
   const { testRequest, order, total, email, phone } = query
 
+  const returnUrl = 'https://craftory.com/lhv-jarelmaks?taotlus=taidetud'
+
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
   const VK_SND_ID = 'Craftory123'
@@ -66,8 +68,8 @@ const getParams = (query) => {
       `</CofContractProduct>`+
       `<ValidToDtime>${moment(Date.now() + 7 * 24 * 3600 * 1000).tz('Europe/Tallinn').format()}</ValidToDtime>`+
     `</CofContractProductList>`
-  const VK_RESPONSE = 'https://craftory.com/a/lhv-jarelmaks/vastus'
-  const VK_RETURN = 'https://craftory.com/lhv-jarelmaks?taotlus=taidetud'
+  const VK_RESPONSE = testRequest ? 'https://craftory.com/tools/lhv/coflink/response' : returnUrl
+  const VK_RETURN = returnUrl
   const VK_DATETIME = moment().tz('Europe/Tallinn').format()
   let VK_MAC = '' // not required in RSA calculation
   const VK_ENCODING = 'UTF-8' // not required in RSA calculation
@@ -112,7 +114,7 @@ const getParams = (query) => {
 }
 
 router.get('/', (req, res) => {
-  return res.status(200).send('Craftory API')
+  return res.status(200).send('')
 })
 
 router.get('/axios', (req, res) => {
@@ -157,13 +159,13 @@ router.get('/form', (req, res) => {
   res.status(200).end(contents)
 })
 
-router.get('/taotlus', (req, res) => {
+router.get('/coflink', (req, res) => {
   const params = getParams(req.query)
 
   res.status(200).end(JSON.stringify(params))
 })
 
-router.post('/vastus', (req, res) => {
+router.post('/coflink/response', (req, res) => {
   console.log('post response', {req, res})
 
   console.log(req.query)
