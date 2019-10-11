@@ -47,8 +47,14 @@ const signMac = (macString) => {
   return signature
 }
 
+router.get('/', (req, res) => {
+  return res.status(200).send('Craftory API')
+})
+
 router.get('/form', (req, res) => {
-  const contents = fs.readFileSync('./form.html', 'utf8')
+  console.log('get /form')
+
+  const contents = fs.readFileSync('./express/form.html', 'utf8')
 
   res.status(200).end(contents)
 })
