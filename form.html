@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!--
+<input name="VK_SERVICE" type="hidden" value="" />
+  <input name="VK_VERSION" type="hidden" value="" />
+  <input name="VK_SND_ID" type="hidden" value="" />
+  <input name="VK_REC_ID" type="hidden" value="" />
+  <input name="VK_STAMP" type="hidden" value="" />
+  <input name="VK_DATA" type="hidden" value="" />
+  <input name="VK_RESPONSE" type="hidden" value="" />
+  <input name="VK_RETURN" type="hidden" value="" />
+  <input name="VK_DATETIME" type="hidden" value="" />
+  <input name="VK_MAC" type="hidden" value="" />
+  <input name="VK_ENCODING" type="hidden" value="" />
+  <input name="VK_LANG" type="hidden" value="" />
+  <input name="VK_EMAIL" type="hidden" value="" />
+  <input name="VK_PHONE" type="hidden" value="" />
+  <button type="submit">Send</button>
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<html>
+  <head>
+    <title>TODO supply a title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <form method="POST" action="https://www.lhv.ee/coflink"></form>
+
+    <script>
+      fetch('https://tallinna-nahatookoda.myshopify.com/tools/api/lhv-jarelmaks?form=true').then(res => res.json()).then((json) => {
+        const form = document.querySelector('form')
+        let formBody = ''
+        for (const i in json) {
+          formBody  += '<input name="' + i + '" type="hidden" value="' + json[i] + '" />'
+        }
+        formBody += '<button type="submit">Send</button>'
+
+        form.innerHTML = formBody
+
+        console.log(json)
+      }).catch((err) => {
+        console.log(err)
+
+        alert('ERROR')
+      })
+    </script>
+  </body>
+</html>

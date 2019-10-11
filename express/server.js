@@ -1,4 +1,5 @@
 'use strict';
+const fs = require('fs')
 const dotenv = require('dotenv').config();
 const express = require('express');
 const path = require('path');
@@ -46,8 +47,14 @@ const signMac = (macString) => {
   return signature
 }
 
+router.get('/form', (req, res) => {
+  const contents = fs.readFileSync('./form.html', 'utf8')
+
+  res.status(200).end(contents)
+})
+
 router.get('/lhv-jarelmaks', (req, res) => {
-  const { testRequest } = req.query
+  const { form, testRequest } = req.query
 
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
@@ -105,6 +112,10 @@ router.get('/lhv-jarelmaks', (req, res) => {
     VK_LANG,
     VK_EMAIL,
     VK_PHONE
+  }
+
+  if (form) {
+    res.status(200).end(JSON.stringify({testRequest: true, ...body}))
   }
 
   axios({
