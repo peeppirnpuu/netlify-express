@@ -47,22 +47,24 @@ const signMac = (macString) => {
   return signature
 }
 
-const getParams = (testRequest = false) => {
+const getParams = (query) => {
+  const { testRequest, order, total, email, phone } = query
+
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
   const VK_SND_ID = 'Craftory123'
   const VK_REC_ID = 'LHV'
-  const VK_STAMP = '1234567890'
+  const VK_STAMP = order
   const VK_DATA =
     `<CofContractProductList>`+
       `<CofContractProduct>`+
-        `<Name>Great Sack</Name>`+
-        `<Code>1122</Code>`+
+        `<Name>Tellimus nr ${order}</Name>`+
+        `<Code></Code>`+
         `<Currency>EUR</Currency>`+
-        `<CostInclVatAmount>55100</CostInclVatAmount>`+
+        `<CostInclVatAmount>${total}</CostInclVatAmount>`+
         `<CostVatPercent>20</CostVatPercent>`+
       `</CofContractProduct>`+
-      `<ValidToDtime>2019-10-20T14:35:00+03:00</ValidToDtime>`+
+      `<ValidToDtime>${moment(Date.now() + 7 * 24 * 3600 * 1000).tz('Europe/Tallinn').format()}</ValidToDtime>`+
     `</CofContractProductList>`
   const VK_RESPONSE = 'https://craftory.com/a/lhv-jarelmaks/vastus'
   const VK_RETURN = 'https://craftory.com/lhv-jarelmaks'
@@ -70,8 +72,8 @@ const getParams = (testRequest = false) => {
   let VK_MAC = '' // not required in RSA calculation
   const VK_ENCODING = 'UTF-8' // not required in RSA calculation
   const VK_LANG = 'EST' // not required in RSA calculation
-  const VK_EMAIL = 'peep.pirnpuu+test@gmail.com'
-  const VK_PHONE = ''
+  const VK_EMAIL = email
+  const VK_PHONE = phone
 
   const mac = getMac([
     VK_SERVICE,
@@ -114,7 +116,7 @@ router.get('/', (req, res) => {
 })
 
 router.get('/axios', (req, res) => {
-  const params = getParams(req.query.testRequest)
+  const params = getParams(req.query)
 
   axios({
     method: 'POST',
@@ -129,7 +131,7 @@ router.get('/axios', (req, res) => {
 })
 
 router.get('/request', (req, res) => {
-  const params = getParams(req.query.testRequest)
+  const params = getParams(req.query)
 
   request({
     method: 'POST',
@@ -156,7 +158,7 @@ router.get('/form', (req, res) => {
 })
 
 router.get('/taotlus', (req, res) => {
-  const params = getParams(req.query.testRequest)
+  const params = getParams(req.query)
 
   res.status(200).end(JSON.stringify(params))
 })
