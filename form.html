@@ -30,7 +30,7 @@ and open the template in the editor.
     <form method="POST" action="https://www.lhv.ee/coflink"></form>
 
     <script>
-      fetch('https://tallinna-nahatookoda.myshopify.com/tools/api/lhv-jarelmaks?form=true').then(res => res.json()).then((json) => {
+      fetch('https://api.craftory.com/.netlify/functions/server/lhv-jarelmaks?form=true').then(res => res.json()).then((json) => {
         const form = document.querySelector('form')
         let formBody = ''
         for (const i in json) {
