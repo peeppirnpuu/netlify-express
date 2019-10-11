@@ -47,21 +47,7 @@ const signMac = (macString) => {
   return signature
 }
 
-router.get('/', (req, res) => {
-  return res.status(200).send('Craftory API')
-})
-
-router.get('/form', (req, res) => {
-  console.log('get /form')
-
-  const contents = fs.readFileSync('/form.html', 'utf8')
-
-  res.status(200).end(contents)
-})
-
-router.get('/lhv-jarelmaks', (req, res) => {
-  const { form, testRequest } = req.query
-
+const getParams = (testRequest = false) => {
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
   const VK_SND_ID = 'Craftory123'
@@ -120,38 +106,62 @@ router.get('/lhv-jarelmaks', (req, res) => {
     VK_PHONE
   }
 
-  if (form) {
-    res.status(200).end(JSON.stringify({testRequest: true, ...body}))
-  }
+  return testRequest ? {testRequest: true, ...body} : body
+}
+
+router.get('/', (req, res) => {
+  return res.status(200).send('Craftory API')
+})
+
+router.get('/axios', (req, res) => {
+  const params = getParams(req.query.testRequest)
 
   axios({
     method: 'POST',
     url: 'https://www.lhv.ee/coflink',
-    data: querystring.stringify(testRequest ? {testRequest: true, ...body} : body)
+    data: querystring.stringify(params)
   })
     .then(function (response) {
       res.redirect(response.request.res.responseUrl) // how secure is using response.request.res.responseUrl
 
       // res.status(200).end(response.data)
     })
-
-  // request({
-  //   method: 'POST',
-  //   uri: 'https://www.lhv.ee/coflink',
-  //   form: {testRequest: true, ...body},
-  //   followAllRedirects: true
-  // })
-  //   .then((body) => {
-  //     console.log('success', body)
-  //     res.status(200).end(body)
-  //   })
-  //   .catch((err) => {
-  //     console.log('error', err)
-  //     res.status(err.statusCode).send(err.message)
-  //   })
 })
 
-router.post('/lhv-jarelmaksu-vastus', (req, res) => {
+router.get('/request', (req, res) => {
+  const params = getParams(req.query.testRequest)
+
+  request({
+    method: 'POST',
+    uri: 'https://www.lhv.ee/coflink',
+    form: params,
+    followAllRedirects: true
+  })
+    .then((body) => {
+      console.log('success', body)
+      res.status(200).end(body)
+    })
+    .catch((err) => {
+      console.log('error', err)
+      res.status(err.statusCode).send(err.message)
+    })
+})
+
+router.get('/form', (req, res) => {
+  console.log('get /form')
+
+  const contents = fs.readFileSync('/form.html', 'utf8')
+
+  res.status(200).end(contents)
+})
+
+router.get('/taotlus', (req, res) => {
+  const params = getParams(req.query.testRequest)
+
+  res.status(200).end(JSON.stringify(params))
+})
+
+router.post('/vastus', (req, res) => {
   console.log('post response', {req, res})
 
   console.log(req.query)
