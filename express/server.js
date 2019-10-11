@@ -46,7 +46,7 @@ const signMac = (macString) => {
   return signature
 }
 
-router.get('/coflink', (req, res) => {
+router.get('/lhv-jarelmaks', (req, res) => {
   const { testRequest } = req.query
 
   const VK_SERVICE = '5011'
@@ -65,8 +65,8 @@ router.get('/coflink', (req, res) => {
       `</CofContractProduct>`+
       `<ValidToDtime>2019-10-20T14:35:00+03:00</ValidToDtime>`+
     `</CofContractProductList>`
-  const VK_RESPONSE = 'https://api.craftory.com/lhv-response'
-  const VK_RETURN = 'https://craftory.com/'
+  const VK_RESPONSE = 'https://tallinna-nahatookoda.myshopify.com/tools/api/lhv-jarelmaksu-vastus'
+  const VK_RETURN = 'https://tallinna-nahatookoda.myshopify.com/'
   const VK_DATETIME = moment().tz('Europe/Tallinn').format()
   let VK_MAC = '' // not required in RSA calculation
   const VK_ENCODING = 'UTF-8' // not required in RSA calculation
@@ -134,7 +134,7 @@ router.get('/coflink', (req, res) => {
   //   })
 })
 
-router.post('/lhv-response', (req, res) => {
+router.post('/lhv-jarelmaksu-vastus', (req, res) => {
   console.log('post response', {req, res})
 
   console.log(req.query)
