@@ -54,7 +54,7 @@ router.get('/', (req, res) => {
 router.get('/form', (req, res) => {
   console.log('get /form')
 
-  const contents = fs.readFileSync('./express/form.html', 'utf8')
+  const contents = fs.readFileSync('/form.html', 'utf8')
 
   res.status(200).end(contents)
 })
