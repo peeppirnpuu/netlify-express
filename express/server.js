@@ -64,8 +64,8 @@ const getParams = (testRequest = false) => {
       `</CofContractProduct>`+
       `<ValidToDtime>2019-10-20T14:35:00+03:00</ValidToDtime>`+
     `</CofContractProductList>`
-  const VK_RESPONSE = 'https://tallinna-nahatookoda.myshopify.com/tools/api/lhv-jarelmaksu-vastus'
-  const VK_RETURN = 'https://tallinna-nahatookoda.myshopify.com/'
+  const VK_RESPONSE = 'https://craftory.com/a/lhv-jarelmaks/vastus'
+  const VK_RETURN = 'https://craftory.com/lhv-jarelmaks'
   const VK_DATETIME = moment().tz('Europe/Tallinn').format()
   let VK_MAC = '' // not required in RSA calculation
   const VK_ENCODING = 'UTF-8' // not required in RSA calculation
