@@ -169,6 +169,8 @@ router.post('/coflink/response', (req, res) => {
   console.log('post /coflink/response', {req, res})
 
   console.log('return req.query', req.query)
+  console.log('return req.body', req.body)
+  console.log('return req.res', req.res)
   return res.status(200).send(req.query)
 })
 
