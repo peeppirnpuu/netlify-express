@@ -50,6 +50,7 @@ const signMac = (macString) => {
 const getParams = (query) => {
   const { testRequest, order, total, email, phone } = query
 
+  const responseUrl = 'https://craftory.com/tools/lhv/coflink/response'
   const returnUrl = 'https://craftory.com/lhv-jarelmaks?taotlus=taidetud'
 
   const VK_SERVICE = '5011'
@@ -68,7 +69,7 @@ const getParams = (query) => {
       `</CofContractProduct>`+
       `<ValidToDtime>${moment(Date.now() + 7 * 24 * 3600 * 1000).tz('Europe/Tallinn').format()}</ValidToDtime>`+
     `</CofContractProductList>`
-  const VK_RESPONSE = testRequest ? 'https://craftory.com/tools/lhv/coflink/response' : returnUrl
+  const VK_RESPONSE = responseUrl
   const VK_RETURN = returnUrl
   const VK_DATETIME = moment().tz('Europe/Tallinn').format()
   let VK_MAC = '' // not required in RSA calculation
@@ -168,9 +169,9 @@ router.get('/coflink', (req, res) => {
 })
 
 router.post('/coflink/response', (req, res) => {
-  console.log('post response', {req, res})
+  console.log('post /coflink/response', {req, res})
 
-  console.log(req.query)
+  console.log('return req.query', req.query)
   return res.status(200).send(req.query)
 })
 
