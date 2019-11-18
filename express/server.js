@@ -48,10 +48,7 @@ const signMac = (macString) => {
 }
 
 const getParams = (query) => {
-  const { testRequest, order, total, email, phone } = query
-
-  const responseUrl = 'https://craftory.com/tools/lhv/coflink/response'
-  const returnUrl = 'https://craftory.com/lhv-jarelmaks?taotlus=taidetud'
+  const { testRequest, order, total, email, phone, returnUrl } = query
 
   const VK_SERVICE = '5011'
   const VK_VERSION = '008'
@@ -69,8 +66,8 @@ const getParams = (query) => {
       `</CofContractProduct>`+
       `<ValidToDtime>${moment(Date.now() + 7 * 24 * 3600 * 1000).tz('Europe/Tallinn').format()}</ValidToDtime>`+
     `</CofContractProductList>`
-  const VK_RESPONSE = responseUrl
-  const VK_RETURN = returnUrl
+  const VK_RESPONSE = 'https://craftory.com/tools/lhv/coflink/response'
+  const VK_RETURN = returnUrl || 'https://craftory.com'
   const VK_DATETIME = moment().tz('Europe/Tallinn').format()
   let VK_MAC = '' // not required in RSA calculation
   const VK_ENCODING = 'UTF-8' // not required in RSA calculation
