@@ -169,8 +169,10 @@ router.get('/coflink', (req, res) => {
 
 router.post('/coflink/response', (req, res) => {
   const body = queryString.parse(req.body.toString())
+  console.log('post /coflink/response body', body)
 
-  const data = convert.xml2json(body.VK_DATA)
+  const data = convert.xml2json(body.VK_DATA, {compact: true})
+  console.log('post /coflink/response data', data)
 
   return res.status(200).send(data)
 })
