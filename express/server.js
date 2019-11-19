@@ -174,7 +174,32 @@ router.post('/coflink/response', (req, res) => {
   const data = convert.xml2json(body.VK_DATA, {compact: true})
   console.log('post /coflink/response data', JSON.parse(data))
 
-  return res.status(200).send('Submitted')
+  let loanDecision = ''
+
+  if (body.VK_SERVICE === '5111') {
+    loanDecision = 'Positive loan decision'
+
+    console.log(loanDecision, {
+      orderId: body.VK_STAMP,
+      contractStatusCode: data.CoflinkContract.ContractStatusCode[_text],
+      contactNumber: data.CoflinkContract.ContractNumber[_text],
+      customerEmail: data.CoflinkContract.CustomerEmail[_text],
+      customerPhone: data.CoflinkContract.CustomerPhone[_text]
+    })
+  } else
+  if (body.VK_SERVICE === '5113') {
+    loanDecision = 'Negative loan decision'
+
+    console.log(loanDecision, {
+      orderId: body.VK_STAMP,
+      message: data.CoflinkContract.Message[_text]
+    })
+  }
+
+  // return res.status(200).send(loanDecision)
+  // return res.redirect('http://craftory.com')
+  response.writeHead(301, {Location: 'https://craftory.com'})
+  response.end()
 })
 
 app.use(bodyParser.json());
