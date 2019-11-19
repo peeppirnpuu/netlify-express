@@ -13,7 +13,8 @@ const NodeRSA = require('node-rsa');
 const sha1 = require('sha1');
 const request = require('request-promise');
 const axios = require('axios');
-const querystring = require('querystring')
+// const querystring = require('querystring'); // formerly used by axios
+const queryString = require('query-string');
 
 const apiKey = process.env.SHOPIFY_API_KEY; // Netlify environment variable
 const apiSecret = process.env.SHOPIFY_API_SECRET; // Netlify environment variable
@@ -169,7 +170,8 @@ router.post('/coflink/response', (req, res) => {
   // console.log('post /coflink/response', {req, res})
 
   // console.log('return req.query', req.query)
-  console.log('return req.body', req.body.toString())
+  console.log('return req.body.toString()', queryString.parse(req.body.toString()))
+  console.log('return req.body', queryString.parse(req.body))
   // console.log('return req.res', req.res)
   return res.status(200).send(req.body.toString())
 })
