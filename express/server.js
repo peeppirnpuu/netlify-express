@@ -23,10 +23,10 @@ const apiSecret = process.env.SHOPIFY_API_SECRET; // Netlify environment variabl
 const accessToken = process.env.SHOPIFY_API_ACCESS_TOKEN; // Netlify environment variable
 const privateKey = new NodeRSA(process.env.PRIVATE_KEY).exportKey(); // Netlify environment variable
 const RSAPrivateKey = new NodeRSA(process.env.RSA_PRIVATE_KEY).exportKey(); // Netlify environment variable
-const mailUsername = new NodeRSA(process.env.MAIL_USERNAME).exportKey(); // Netlify environment variable
-const mailPassword = new NodeRSA(process.env.MAIL_PASSWORD).exportKey(); // Netlify environment variable
-const mailFrom = new NodeRSA(process.env.MAIL_FROM).exportKey(); // Netlify environment variable
-const mailTo = new NodeRSA(process.env.MAIL_TO).exportKey(); // Netlify environment variable
+const mailUsername = new NodeRSA(process.env.MAIL_USERNAME); // Netlify environment variable
+const mailPassword = new NodeRSA(process.env.MAIL_PASSWORD); // Netlify environment variable
+const mailFrom = new NodeRSA(process.env.MAIL_FROM); // Netlify environment variable
+const mailTo = new NodeRSA(process.env.MAIL_TO); // Netlify environment variable
 
 const lpad = (value, padding) => {
   if (value.toString().length >= padding) return value
