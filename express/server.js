@@ -202,28 +202,28 @@ router.post('/coflink/response', (req, res) => {
     }
   }
 
-  // const transporter = nodemailer.createTransport({
-  //   service: 'gmail',
-  //   auth: {
-  //     user: mailUsername,
-  //     pass: mailPassword
-  //   }
-  // })
-  //
-  // const mailOptions = {
-  //   from: mailFrom,
-  //   to: mailTo,
-  //   subject: loanDecision,
-  //   text: JSON.stringify(loanDetails)
-  // }
-  //
-  // transporter.sendMail(mailOptions, function(error, info) {
-  //   if (error) {
-  //     console.log('Email error: 'error)
-  //   } else {
-  //     console.log('Email sent: '+info.response)
-  //   }
-  // })
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: mailUsername,
+      pass: mailPassword
+    }
+  })
+
+  const mailOptions = {
+    from: mailFrom,
+    to: mailTo,
+    subject: loanDecision,
+    text: JSON.stringify(loanDetails)
+  }
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log('Email error: 'error)
+    } else {
+      console.log('Email sent: '+info.response)
+    }
+  })
 
   return res.status(200).send(loanDecision)
   // return res.redirect('http://craftory.com')
