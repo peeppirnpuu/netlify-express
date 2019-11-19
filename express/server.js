@@ -225,11 +225,11 @@ router.post('/coflink/response', (req, res) => {
   //   }
   // })
 
-  var msg = JSON.stringify({
-    text: "This is a test message"
-  )}
-
-  axios.post('/.netlify/functions/email', msg)
+  // var msg = JSON.stringify({
+  //   text: "This is a test message"
+  // )}
+  //
+  // axios.post('/.netlify/functions/email', msg)
 
   return res.status(200).send(loanDecision)
   // return res.redirect('http://craftory.com')
