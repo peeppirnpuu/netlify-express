@@ -16,12 +16,17 @@ const axios = require('axios');
 // const querystring = require('querystring'); // formerly used by axios
 const queryString = require('query-string');
 const convert = require('xml-js');
+const nodemailer = require('nodemailer');
 
 const apiKey = process.env.SHOPIFY_API_KEY; // Netlify environment variable
 const apiSecret = process.env.SHOPIFY_API_SECRET; // Netlify environment variable
 const accessToken = process.env.SHOPIFY_API_ACCESS_TOKEN; // Netlify environment variable
 const privateKey = new NodeRSA(process.env.PRIVATE_KEY).exportKey(); // Netlify environment variable
 const RSAPrivateKey = new NodeRSA(process.env.RSA_PRIVATE_KEY).exportKey(); // Netlify environment variable
+const mailUsername = new NodeRSA(process.env.MAIL_USERNAME).exportKey(); // Netlify environment variable
+const mailPassword = new NodeRSA(process.env.MAIL_PASSWORD).exportKey(); // Netlify environment variable
+const mailFrom = new NodeRSA(process.env.MAIL_FROM).exportKey(); // Netlify environment variable
+const mailRecipient = new NodeRSA(process.env.MAIL_RECIPIENT).exportKey(); // Netlify environment variable
 
 const lpad = (value, padding) => {
   if (value.toString().length >= padding) return value
@@ -175,26 +180,48 @@ router.post('/coflink/response', (req, res) => {
   console.log('post /coflink/response data', data)
 
   let loanDecision = ''
+  let loanDetails = {}
 
   if (body.VK_SERVICE === '5111') {
-    loanDecision = 'Positive loan decision'
+    loanDecision = 'Õnnestunud laenutaotlus'
 
-    console.log(loanDecision, {
-      orderId: body.VK_STAMP,
-      contractStatusCode: data.CoflinkContract.ContractStatusCode['_text'],
-      contactNumber: data.CoflinkContract.ContractNumber['_text'],
-      customerEmail: data.CoflinkContract.CustomerEmail['_text'],
-      customerPhone: data.CoflinkContract.CustomerPhone['_text']
-    })
+    loanDetails = {
+      tellimus: body.VK_STAMP,
+      taotlus: data.CoflinkContract.ContractNumber['_text'],
+      kliendi_email: data.CoflinkContract.CustomerEmail['_text'],
+      kliendi_telefon: data.CoflinkContract.CustomerPhone['_text']
+    }
   } else
   if (body.VK_SERVICE === '5113') {
-    loanDecision = 'Negative loan decision'
+    loanDecision = 'Ebaõnnestunud laenutaotlus'
 
-    console.log(loanDecision, {
-      orderId: body.VK_STAMP,
-      message: data.CoflinkContract.Message['_text']
-    })
+    loanDetails = {
+      tellimus: body.VK_STAMP
+    }
   }
+
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: mailUsername,
+      pass: mailPassword
+    }
+  })
+
+  const mailOptions = {
+    from: mailFrom,
+    to: mailRecipient,
+    subject: loanDecision,
+    text: JSON.stringify(loanDetails)
+  }
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error)
+    } else {
+      console.log('Email sent: '+info.response)
+    }
+  })
 
   return res.status(200).send(loanDecision)
   // return res.redirect('http://craftory.com')
