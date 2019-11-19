@@ -27,6 +27,7 @@
     "moment-timezone": "^0.5.26",
     "node-rsa": "^1.0.6",
     "nodemailer": "^6.3.1",
+    "nodemailer-smtp-transport": "^2.7.4",
     "query-string": "^6.9.0",
     "querystring": "^0.2.0",
     "sha1": "^1.1.1",
