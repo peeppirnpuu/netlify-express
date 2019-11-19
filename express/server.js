@@ -167,13 +167,7 @@ router.get('/coflink', (req, res) => {
 })
 
 router.post('/coflink/response', (req, res) => {
-  // console.log('post /coflink/response', {req, res})
-
-  // console.log('return req.query', req.query)
-  console.log('return req.body.toString()', queryString.parse(req.body.toString()))
-  console.log('return req.body', queryString.parse(req.body))
-  // console.log('return req.res', req.res)
-  return res.status(200).send(req.body.toString())
+  return res.status(200).send(queryString.parse(req.body.toString()))
 })
 
 app.use(bodyParser.json());
