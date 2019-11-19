@@ -171,8 +171,8 @@ router.post('/coflink/response', (req, res) => {
   const body = queryString.parse(req.body.toString())
   console.log('post /coflink/response body', body)
 
-  const data = convert.xml2json(body.VK_DATA, {compact: true})
-  console.log('post /coflink/response data', JSON.parse(data))
+  const data = JSON.parse(convert.xml2json(body.VK_DATA, {compact: true}))
+  console.log('post /coflink/response data', data)
 
   let loanDecision = ''
 
