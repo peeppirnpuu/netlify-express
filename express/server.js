@@ -181,10 +181,10 @@ router.post('/coflink/response', (req, res) => {
 
     console.log(loanDecision, {
       orderId: body.VK_STAMP,
-      contractStatusCode: data.CoflinkContract.ContractStatusCode[_text],
-      contactNumber: data.CoflinkContract.ContractNumber[_text],
-      customerEmail: data.CoflinkContract.CustomerEmail[_text],
-      customerPhone: data.CoflinkContract.CustomerPhone[_text]
+      contractStatusCode: data.CoflinkContract.ContractStatusCode['_text'],
+      contactNumber: data.CoflinkContract.ContractNumber['_text'],
+      customerEmail: data.CoflinkContract.CustomerEmail['_text'],
+      customerPhone: data.CoflinkContract.CustomerPhone['_text']
     })
   } else
   if (body.VK_SERVICE === '5113') {
@@ -192,7 +192,7 @@ router.post('/coflink/response', (req, res) => {
 
     console.log(loanDecision, {
       orderId: body.VK_STAMP,
-      message: data.CoflinkContract.Message[_text]
+      message: data.CoflinkContract.Message['_text']
     })
   }
 
