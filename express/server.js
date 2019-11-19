@@ -26,7 +26,7 @@ const RSAPrivateKey = new NodeRSA(process.env.RSA_PRIVATE_KEY).exportKey(); // N
 const mailUsername = new NodeRSA(process.env.MAIL_USERNAME).exportKey(); // Netlify environment variable
 const mailPassword = new NodeRSA(process.env.MAIL_PASSWORD).exportKey(); // Netlify environment variable
 const mailFrom = new NodeRSA(process.env.MAIL_FROM).exportKey(); // Netlify environment variable
-const mailRecipient = new NodeRSA(process.env.MAIL_RECIPIENT).exportKey(); // Netlify environment variable
+const mailTo = new NodeRSA(process.env.MAIL_TO).exportKey(); // Netlify environment variable
 
 const lpad = (value, padding) => {
   if (value.toString().length >= padding) return value
@@ -210,7 +210,7 @@ router.post('/coflink/response', (req, res) => {
 
   const mailOptions = {
     from: mailFrom,
-    to: mailRecipient,
+    to: mailTo,
     subject: loanDecision,
     text: JSON.stringify(loanDetails)
   }
