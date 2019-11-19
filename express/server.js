@@ -15,6 +15,7 @@ const request = require('request-promise');
 const axios = require('axios');
 // const querystring = require('querystring'); // formerly used by axios
 const queryString = require('query-string');
+const convert = require('xml-js');
 
 const apiKey = process.env.SHOPIFY_API_KEY; // Netlify environment variable
 const apiSecret = process.env.SHOPIFY_API_SECRET; // Netlify environment variable
@@ -167,7 +168,11 @@ router.get('/coflink', (req, res) => {
 })
 
 router.post('/coflink/response', (req, res) => {
-  return res.status(200).send(queryString.parse(req.body.toString()))
+  const body = queryString.parse(req.body.toString())
+
+  const data = convert.xml2json(body.VK_DATA)
+
+  return res.status(200).send(data)
 })
 
 app.use(bodyParser.json());
