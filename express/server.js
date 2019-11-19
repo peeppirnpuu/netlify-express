@@ -196,10 +196,10 @@ router.post('/coflink/response', (req, res) => {
     })
   }
 
-  // return res.status(200).send(loanDecision)
+  return res.status(200).send(loanDecision)
   // return res.redirect('http://craftory.com')
-  response.writeHead(301, {Location: 'https://craftory.com'})
-  response.end()
+  // response.writeHead(301, {Location: 'https://craftory.com'})
+  // response.end()
 })
 
 app.use(bodyParser.json());
