@@ -174,8 +174,7 @@ router.post('/coflink/response', (req, res) => {
   const data = convert.xml2json(body.VK_DATA, {compact: true})
   console.log('post /coflink/response data', JSON.parse(data))
 
-  // return res.status(200).send(data)
-  return res.redirect('http://craftory.com')
+  return res.status(200).send('Submitted')
 })
 
 app.use(bodyParser.json());
