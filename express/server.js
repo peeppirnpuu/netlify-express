@@ -75,7 +75,7 @@ const getParams = (query) => {
       `</CofContractProduct>`+
       `<ValidToDtime>${moment(Date.now() + 7 * 24 * 3600 * 1000).tz('Europe/Tallinn').format()}</ValidToDtime>`+
     `</CofContractProductList>`
-  const VK_RESPONSE = 'https://api.craftory.com/.netlify/functions/server/coflink/response' // 'https://craftory.com/tools/lhv/coflink/response'
+  const VK_RESPONSE = returnUrl || 'https://api.craftory.com/.netlify/functions/server/coflink/response' // Shopify proxy URL responds with shop parameters https://craftory.com/tools/lhv/coflink/response
   const VK_RETURN = returnUrl || 'https://craftory.com'
   const VK_DATETIME = moment().tz('Europe/Tallinn').format()
   let VK_MAC = '' // not required in RSA calculation
